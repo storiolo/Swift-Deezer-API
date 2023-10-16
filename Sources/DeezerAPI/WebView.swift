@@ -14,14 +14,14 @@ extension DeezerAPI {
         
         public var body: some View {
             if let url = deezer.makeAuthorizationURL(){
-                WebView(deezer: $deezer, url: url, isHidden: false)
+                WebView(deezer: $deezer, url: url)
             }
         }
     }
     
     public func Authorization(deezer: Binding<DeezerAPI>) {
         if let url = self.makeAuthentificationURL(){
-            _ = WebView(deezer: deezer, url: url, isHidden: true)
+            _ = WebView(deezer: deezer, url: url)
         }
     }
     
@@ -29,13 +29,10 @@ extension DeezerAPI {
     struct WebView: UIViewRepresentable {
         @Binding var deezer: DeezerAPI
         var url: URL
-        var isHidden: Bool
         
         func makeUIView(context: Context) -> WKWebView {
             let webView = WKWebView()
             webView.navigationDelegate = context.coordinator
-            webView.isHidden = self.isHidden
-            print("test")
             return webView
         }
         
@@ -56,10 +53,17 @@ extension DeezerAPI {
             }
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-                let javascript = "document.getElementsByClassName('btn btn-primary')[0].click();"
-                webView.evaluateJavaScript(javascript) { (result, error) in
-                    if let error = error {
-                        print("JavaScript Error: \(error)")
+
+                
+                webView.evaluateJavaScript("document.readyState") { (result, error) in
+                    if let state = result as? String, state == "complete" {
+                        // La page a chargé, exécutez le code JavaScript ici
+                        let javascript = "document.querySelector('.btn.btn-primary').click();"
+                        webView.evaluateJavaScript(javascript) { (result, error) in
+                            if let error = error {
+                                print("JavaScript Error: \(error)")
+                            }
+                        }
                     }
                 }
                 
