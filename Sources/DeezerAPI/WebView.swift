@@ -4,19 +4,10 @@ import SwiftUI
 import WebKit
 
 
-struct DeezerLoginWebView: View {
-    var isShowing: Bool
-    var deezer: DeezerAPI
-    var url: URL
-
-    var body: some View {
-        WebView(isShowing: isShowing, deezer: deezer, url: url)
-    }
-}
 
 struct WebView: UIViewRepresentable {
-    var isShowing: Bool
-    var deezer: DeezerAPI
+    @Binding var isShowing: Bool
+    @Binding var deezer: DeezerAPI
     var url: URL
 
     func makeUIView(context: Context) -> WKWebView {

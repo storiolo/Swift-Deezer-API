@@ -3,6 +3,7 @@
 import Foundation
 import Alamofire
 import WebKit
+import SwiftUI
 
 
 public struct DeezerAPI {
@@ -28,9 +29,14 @@ public struct DeezerAPI {
     
     
     public var isShowingView = false
-    public func ConnectView(){
-        if let url = self.makeAuthorizationURL(){
-            DeezerLoginWebView(isShowing: isShowingView, deezer: self, url: url)
+    public struct ConnectView: View {
+        @Binding var isShowing: Bool
+        @Binding var deezer: DeezerAPI
+
+        public var body: some View {
+            if let url = deezer.makeAuthorizationURL(){
+                WebView(isShowing: $isShowing, deezer: $deezer, url: url)
+            }
         }
     }
     
