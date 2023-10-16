@@ -53,17 +53,11 @@ extension DeezerAPI {
             }
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-
+                let javascript = "document.getElementsByClassName('btn btn-primary')[0].addEventListener('click', function () { window.webkit.messageHandlers.log.postMessage('submit');});"
                 
-                webView.evaluateJavaScript("document.readyState") { (result, error) in
-                    if let state = result as? String, state == "complete" {
-                        // La page a chargé, exécutez le code JavaScript ici
-                        let javascript = "document.querySelector('.btn.btn-primary').click();"
-                        webView.evaluateJavaScript(javascript) { (result, error) in
-                            if let error = error {
-                                print("JavaScript Error: \(error)")
-                            }
-                        }
+                webView.evaluateJavaScript(javascript) { (result, error) in
+                    if let error = error {
+                        print("JavaScript Error: \(error)")
                     }
                 }
                 
