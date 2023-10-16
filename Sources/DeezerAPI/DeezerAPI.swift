@@ -30,7 +30,7 @@ public struct DeezerAPI {
     public var isShowingView = false
     public func ConnectView(){
         if let url = self.makeAuthorizationURL(){
-            DeezerLoginWebView(isShowing: $isShowingView, deezer: self, url: $url)
+            DeezerLoginWebView(isShowing: isShowingView, deezer: self, url: url)
         }
     }
     
