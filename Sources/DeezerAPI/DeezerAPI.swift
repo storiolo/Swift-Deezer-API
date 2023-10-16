@@ -1,6 +1,8 @@
+#if os(iOS)
+
 import Foundation
 import Alamofire
-
+import WebKit
 
 
 public struct DeezerAPI {
@@ -22,9 +24,13 @@ public struct DeezerAPI {
         self.clientSecret = clientSecret
         self.redirect_uri = redirect_uri
         self.permissions = permissions
-        
-        get_Token(){
-            
+    }
+    
+    
+    public var isShowingView = false
+    public func ConnectView(){
+        if let url = self.makeAuthorizationURL(){
+            DeezerLoginWebView(isShowing: $isShowingView, deezer: self, url: $url)
         }
     }
     
@@ -100,3 +106,5 @@ public struct DeezerAPI {
 
 
 }
+
+#endif
