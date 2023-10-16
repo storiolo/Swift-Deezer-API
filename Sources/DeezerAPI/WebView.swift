@@ -14,8 +14,14 @@ extension DeezerAPI {
         
         public var body: some View {
             if let url = deezer.makeAuthorizationURL(){
-                WebView(deezer: $deezer, url: url)
+                WebView(deezer: $deezer, url: url, isHidden: false)
             }
+        }
+    }
+    
+    public func Authorization(deezer: Binding<DeezerAPI>) {
+        if let url = self.makeAuthentificationURL(){
+            _ = WebView(deezer: deezer, url: url, isHidden: true)
         }
     }
     
@@ -23,11 +29,12 @@ extension DeezerAPI {
     struct WebView: UIViewRepresentable {
         @Binding var deezer: DeezerAPI
         var url: URL
+        var isHidden: Bool
         
         func makeUIView(context: Context) -> WKWebView {
             let webView = WKWebView()
             webView.navigationDelegate = context.coordinator
-//            webView.isHidden = true
+            webView.isHidden = self.isHidden
             return webView
         }
         
