@@ -8,6 +8,7 @@ import SwiftUI
 
 public struct DeezerAPI {
     
+    public var isShowingView = false
     public var clientId = ""
     public var clientSecret = ""
     public var redirect_uri = ""
@@ -26,19 +27,7 @@ public struct DeezerAPI {
         self.redirect_uri = redirect_uri
         self.permissions = permissions
     }
-    
-    
-    public var isShowingView = false
-    public struct ConnectView: View {
-        @Binding var isShowing: Bool
-        @Binding var deezer: DeezerAPI
 
-        public var body: some View {
-            if let url = deezer.makeAuthorizationURL(){
-                WebView(isShowing: $isShowing, deezer: $deezer, url: url)
-            }
-        }
-    }
     
     
     
