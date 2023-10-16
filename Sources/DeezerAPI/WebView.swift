@@ -35,6 +35,7 @@ extension DeezerAPI {
             let webView = WKWebView()
             webView.navigationDelegate = context.coordinator
             webView.isHidden = self.isHidden
+            print("test")
             return webView
         }
         
@@ -55,7 +56,6 @@ extension DeezerAPI {
             }
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-                print("test")
                 if let redirect_url = URL(string: parent.deezer.redirect_uri) {
                     if let url = navigationAction.request.url, url.host == redirect_url.host && url.path.hasPrefix(redirect_url.path) {
                         if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
