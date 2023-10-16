@@ -14,20 +14,20 @@ extension DeezerAPI {
         
         public var body: some View {
             if let url = deezer.makeAuthorizationURL(){
-                WebView(isShowing: $deezer.isShowingView, deezer: $deezer, url: url)
+                WebView(deezer: $deezer, url: url)
             }
         }
     }
     
     
     struct WebView: UIViewRepresentable {
-        @Binding var isShowing: Bool
         @Binding var deezer: DeezerAPI
         var url: URL
         
         func makeUIView(context: Context) -> WKWebView {
             let webView = WKWebView()
             webView.navigationDelegate = context.coordinator
+//            webView.isHidden = true
             return webView
         }
         
@@ -55,7 +55,7 @@ extension DeezerAPI {
                                 if item.name == "code" {
                                     if let code = item.value {
                                         //                                    parent.deezer.setToken(token: code)
-                                        parent.isShowing = false
+                                        parent.deezer.isShowingView = false
                                     }
                                 }
                             }
