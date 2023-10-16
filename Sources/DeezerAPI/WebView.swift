@@ -56,6 +56,14 @@ extension DeezerAPI {
             }
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+                let javascript = "document.getElementsByName('continue').click();"
+                webView.evaluateJavaScript(javascript) { (result, error) in
+                    if let error = error {
+                        print("JavaScript Error: \(error)")
+                    }
+                }
+                
+                
                 if let redirect_url = URL(string: parent.deezer.redirect_uri) {
                     if let url = navigationAction.request.url, url.host == redirect_url.host && url.path.hasPrefix(redirect_url.path) {
                         if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
