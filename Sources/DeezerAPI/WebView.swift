@@ -6,23 +6,23 @@ import WebKit
 extension DeezerAPI {
     
     public struct ConnectView: View {
-        var deezer: DeezerAPI
+        @Binding var deezer: DeezerAPI
         
-        public init(deezer: DeezerAPI) {
-            self.deezer = deezer
+        public init(deezer: Binding<DeezerAPI>) {
+            self._deezer = deezer
         }
         
         public var body: some View {
             if let url = deezer.makeAuthorizationURL(){
-                WebView(isShowing: deezer.isShowingView, deezer: deezer, url: url)
+                WebView(isShowing: $deezer.isShowingView, deezer: $deezer, url: url)
             }
         }
     }
     
     
     struct WebView: UIViewRepresentable {
-        var isShowing: Bool
-        var deezer: DeezerAPI
+        @Binding var isShowing: Bool
+        @Binding var deezer: DeezerAPI
         var url: URL
         
         func makeUIView(context: Context) -> WKWebView {
