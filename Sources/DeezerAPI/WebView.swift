@@ -56,7 +56,7 @@ extension DeezerAPI {
             }
             
             func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-                let javascript = "document.getElementsByName('continue').click();"
+                let javascript = "document.getElementsByClassName('btn btn-primary')[0].click();"
                 webView.evaluateJavaScript(javascript) { (result, error) in
                     if let error = error {
                         print("JavaScript Error: \(error)")
