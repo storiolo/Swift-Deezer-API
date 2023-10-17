@@ -46,9 +46,7 @@ extension DeezerAPI {
                 }
                 
             }
-            .onChange(of: self.state) { newState in
-                
-            }
+//            .onChange(of: self.state) { newState in}
             .onReceive(timer) { _ in
                 self.state = deezer.getState()
                 if self.state == .tokenFound {

@@ -31,26 +31,27 @@ struct ErrorDetails: Codable {
 
 //User
 public struct DeezerUser: Decodable {
-    let id: Int?
-    let name: String?
-    let lastName: String?
-    let firstName: String?
-    let email: String?
-    let status: Int?
-    let birthday: String?
-    let inscriptionDate: String?
-    let gender: String?
-    let link: String?
-    let picture: String?
-    let pictureSmall: String?
-    let pictureMedium: String?
-    let pictureBig: String?
-    let pictureXL: String?
-    let country: String?
-    let lang: String?
-    let isKid: Bool?
-    let explicitContentLevel: String?
-    let explicitContentLevelsAvailable: [String]?
-    let tracklist: String?
-    let type: String?
+    public let id: Int?
+    public let name: String?
+    public let lastName: String?
+    public let firstName: String?
+    public let email: String?
+    public let status: Int?
+    public let birthday: String?
+    public let inscriptionDate: String?
+    public let gender: String?
+    public let link: String?
+    public let picture: String?
+    public let pictureSmall: String?
+    public let pictureMedium: String?
+    public let pictureBig: String?
+    public let pictureXL: String?
+    public let country: String?
+    public let lang: String?
+    public let isKid: Bool?
+    public let explicitContentLevel: String?
+    public let explicitContentLevelsAvailable: [String]?
+    public let tracklist: String?
+    public let type: String?
 }
+
