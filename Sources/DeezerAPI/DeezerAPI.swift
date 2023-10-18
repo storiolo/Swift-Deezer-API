@@ -23,6 +23,18 @@ public struct DeezerAPI {
     private(set) var token: _DeezerValue_<String> = _DeezerValue_("")
     private(set) var state: _DeezerValue_<ConnectState> = _DeezerValue_(.start)
 
+    
+    
+    ///- <<---- Easy Flow ---->>\\
+    ///1. if no login entered ConnectView
+    ///2. AutoConnect
+    ///3. Query anything
+    ///4. if token expires, it will back to Autoconnect automatically
+    ///- <<---- Hard Flow ---->>\\
+    ///1. makeAuthorizationURL -> retrieve the token -> setToken
+    ///2. makeAuthentificationURL -> retrieve the accessToken
+    ///3. Query anything
+    ///4. if token expires, you'll have to redo 1 and 2
     public init(clientId: String, clientSecret: String, redirect_uri: String, permissions: String) {
         self.clientId = clientId
         self.clientSecret = clientSecret
@@ -33,9 +45,6 @@ public struct DeezerAPI {
     
     //<<---- Accessor ---->>\\
     
-    public func setaccessToken(_ accessToken: String){
-        self.accessToken.value = accessToken
-    }
     public func setToken(_ token: String){
         self.token.value = token
     }
@@ -46,6 +55,7 @@ public struct DeezerAPI {
         return self.state.value
     }
     
+    
     public func getAccessToken() -> String {
         return self.accessToken.value
     }
@@ -53,21 +63,10 @@ public struct DeezerAPI {
         return self.token.value
     }
     
+    
+    ///Return true if user is connected
     public func isConnected() -> Bool {
         return self.state.value == .connected
     }
-    
-
-    //<<---- Easy Flow ---->>\\
-    //1. if no login entered ConnectView
-    //2. Start with AutoConnect
-    //3. Query anything
-    //4. if token expires, it will back to Autoconnect automatically
-    
-    //<<---- Hard Flow ---->>\\
-    //1. makeAuthorizationURL -> retrieve the token -> setToken
-    //2. makeAuthentificationURL -> retrieve the accessToken -> setaccessToken
-    //3. Query anything
-    //4. if token expires, you'll have to redo 1 and 2
     
 }

@@ -10,7 +10,11 @@ extension DeezerAPI {
     
     static let base_url = "https://api.deezer.com/"
     
-    //url?access_token=
+    ///construct query url
+    ///
+    ///post is optional
+    ///example:
+    ///- request_url?access_token=XXXX&post=value
     public func makedataURL(request: String, post: String? = nil) -> URL? {
         let queryItems = [URLQueryItem(name: "access_token", value: self.accessToken.value)]
         var urlComps = URLComponents(string: request)!
@@ -112,21 +116,20 @@ extension DeezerAPI {
     
     
     //https://api.deezer.com/user/me/playlists?title=
-    //return playlist id
     public func createPlaylist(title: String, completed: @escaping (DeezerCreatePlaylist?) -> Void) {
         self.query(DeezerCreatePlaylist.self, url: "user/me/playlists", post: "title="+title, completed: completed)
     }
     
     
     //https://api.deezer.com/playlist/PLATLIST_ID/tracks?songs=id1,id2...
-    //return true/false
+    ///return true/false
     public func addTracksToPlaylist(playlist_id: String, tracks_id: [String], completed: @escaping (Bool?) -> Void) {
         self.query(Bool.self, url: "playlist/"+playlist_id+"/tracks", post: "songs="+tracks_id.joined(separator: ","), completed: completed)
     }
     
     
     //https://api.deezer.com/user/me/tracks?track_id=
-    //return true/false
+    ///return true/false
     public func addTrackToFavorite(track_id: String, completed: @escaping (Bool?) -> Void) {
         self.query(Bool.self, url: "user/me/tracks", post: "track_id="+track_id, completed: completed)
     }

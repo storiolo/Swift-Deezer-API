@@ -12,7 +12,8 @@ extension DeezerAPI {
     //1.Connect on makeAuthorizationURL -> setToken
     //2.get_accessToken via makeAuthentificationURL
     
-    //https://connect.deezer.com/oauth/auth.php?app_id=YOUR_APP_ID&redirect_uri=YOUR_REDIRECT_URI&perms=PERMISSIONS
+    ///construct authotization URL
+    ///https://connect.deezer.com/oauth/auth.php?app_id=YOUR_APP_ID&redirect_uri=YOUR_REDIRECT_URI&perms=PERMISSIONS
     public func makeAuthorizationURL() -> URL? {
         let queryItems = [URLQueryItem(name: "app_id", value: self.clientId),
                           URLQueryItem(name: "redirect_uri", value: self.redirect_uri),
@@ -22,7 +23,8 @@ extension DeezerAPI {
         return urlComps.url!
     }
     
-    //https://connect.deezer.com/oauth/access_token.php?app_id=YOU_APP_ID&secret=YOU_APP_SECRET&code=TOKEN
+    ///construct authentification URL
+    ///https://connect.deezer.com/oauth/access_token.php?app_id=YOU_APP_ID&secret=YOU_APP_SECRET&code=TOKEN
     public func makeAuthentificationURL() -> URL? {
 
         let queryItems = [URLQueryItem(name: "app_id", value: self.clientId),
@@ -33,7 +35,10 @@ extension DeezerAPI {
         return urlComps.url!
     }
     
-    public func get_accessToken(completed: @escaping (String?) -> Void) {
+    ///Get the access Token by going to the authentification URL
+    ///
+    ///return true if operation successfull
+    public func get_accessToken(completed: @escaping (Bool) -> Void) {
         AF.request(makeAuthentificationURL()!, method: .get).responseString { response in
             switch response.result {
             case .success(let data):
@@ -46,12 +51,13 @@ extension DeezerAPI {
                         accessTokenEnd = data.endIndex
                     }
                     print("deezer: Access Token loaded")
-                    completed(String(data[accessTokenStart..<accessTokenEnd]))
+                    self.accessToken.value = String(data[accessTokenStart..<accessTokenEnd])
+                    completed(true)
                 } else {
-                    completed(nil)
+                    completed(false)
                 }
             case .failure(_):
-                completed(nil)
+                completed(false)
             }
         }
     }

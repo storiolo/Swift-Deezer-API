@@ -9,7 +9,7 @@ import WebKit
 
 extension DeezerAPI {
     
-    //ConnectView is used to display page to connect
+    ///ConnectView is used to display page to connect
     public struct ConnectView: View {
         @Binding var deezer: DeezerAPI
         
@@ -24,8 +24,8 @@ extension DeezerAPI {
         }
     }
     
-    //AutoConnect is used to autoConnect when user has already connected (one time) to Deezer
-    //it will do the connect flow automatically
+    ///AutoConnect is used to autoConnect when user has already connected to Deezer ;
+    ///it will do the connect flow automatically
     public struct AutoConnect: View {
         @Binding var deezer: DeezerAPI
         private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -50,9 +50,8 @@ extension DeezerAPI {
             .onReceive(timer) { _ in
                 self.state = deezer.getState()
                 if self.state == .tokenFound {
-                    deezer.get_accessToken(){ accessToken in
-                        if accessToken != nil {
-                            deezer.setaccessToken(accessToken!)
+                    deezer.get_accessToken(){ success in
+                        if success {
                             deezer.setState(.connected)
                             print("deezer: connected")
                         } else {
@@ -64,7 +63,6 @@ extension DeezerAPI {
             }
         }
     }
-    
     
     struct WebView: UIViewRepresentable {
         @Binding var deezer: DeezerAPI
