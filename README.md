@@ -43,11 +43,11 @@ Note: Of course you can choose whatever you want for permissions
 
 Below is the flow to connect to deezer API, **this swift package will do it**.
 1. Get the Token on this url (log if it is not)
-    https://connect.deezer.com/oauth/auth.php?app_id=YOUR_APP_ID&redirect_uri=YOUR_REDIRECT_URI&perms=PERMISSIONS
-    **makeAuthorizationURL()** return the constructed url
+    - https://connect.deezer.com/oauth/auth.php?app_id=YOUR_APP_ID&redirect_uri=YOUR_REDIRECT_URI&perms=PERMISSIONS
+    - **makeAuthorizationURL()** return the constructed url
 2. Get the Access Token on this url
-    https://connect.deezer.com/oauth/access_token.php?app_id=YOUR_APP_ID&secret=YOUR_APP_SECRET&code=TOKEN
-    **makeAuthentificationURL()** return the constructed url
+    - https://connect.deezer.com/oauth/access_token.php?app_id=YOUR_APP_ID&secret=YOUR_APP_SECRET&code=TOKEN
+    - **makeAuthentificationURL()** return the constructed url
 3. You are connected and you can do any request. **However**, someday your access token will expire and you'll have to redo flow.
 
 
