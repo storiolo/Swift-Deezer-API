@@ -25,16 +25,11 @@ public struct DeezerAPI {
 
     
     
-    ///- <<---- Easy Flow ---->>\\
+    ///- <<---- Flow ---->>\\
     ///1. if no login entered ConnectView
     ///2. AutoConnect
     ///3. Query anything
     ///4. if token expires, it will back to Autoconnect automatically
-    ///- <<---- Hard Flow ---->>\\
-    ///1. makeAuthorizationURL -> retrieve the token -> setToken
-    ///2. makeAuthentificationURL -> retrieve the accessToken
-    ///3. Query anything
-    ///4. if token expires, you'll have to redo 1 and 2
     public init(clientId: String, clientSecret: String, redirect_uri: String, permissions: String) {
         self.clientId = clientId
         self.clientSecret = clientSecret

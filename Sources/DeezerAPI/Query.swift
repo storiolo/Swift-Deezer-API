@@ -15,7 +15,7 @@ extension DeezerAPI {
     ///post is optional
     ///example:
     ///- request_url?access_token=XXXX&post=value
-    public func makedataURL(request: String, post: String? = nil) -> URL? {
+    func makedataURL(request: String, post: String? = nil) -> URL? {
         let queryItems = [URLQueryItem(name: "access_token", value: self.accessToken.value)]
         var urlComps = URLComponents(string: request)!
         urlComps.queryItems = queryItems
@@ -32,7 +32,7 @@ extension DeezerAPI {
     ///- type is the data output requested, see struct file and find your wonderland
     ///- post is optionnal, if the query require more input, eg. see post Methods
     ///- completed will return the query
-    public func query<T: Decodable>(_ type: T.Type, url: String, post: String? = nil, completed: @escaping (T?) -> Void) {
+    func query<T: Decodable>(_ type: T.Type, url: String, post: String? = nil, completed: @escaping (T?) -> Void) {
         Task {
             //If not in connected repeat until it is
             while self.state.value != .connected {}

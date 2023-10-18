@@ -24,7 +24,7 @@ extension DeezerAPI {
     }
     
     ///construct authentification URL
-    ///https://connect.deezer.com/oauth/access_token.php?app_id=YOU_APP_ID&secret=YOU_APP_SECRET&code=TOKEN
+    ///https://connect.deezer.com/oauth/access_token.php?app_id=YOUR_APP_ID&secret=YOUR_APP_SECRET&code=TOKEN
     public func makeAuthentificationURL() -> URL? {
 
         let queryItems = [URLQueryItem(name: "app_id", value: self.clientId),
