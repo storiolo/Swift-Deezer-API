@@ -46,6 +46,13 @@ public struct DeezerAPI {
         return self.state.value
     }
     
+    public func getAccessToken() -> String {
+        return self.accessToken.value
+    }
+    public func getToken() -> String {
+        return self.token.value
+    }
+    
     public func isConnected() -> Bool {
         return self.state.value == .connected
     }
