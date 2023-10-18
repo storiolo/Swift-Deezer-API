@@ -30,7 +30,10 @@ You can create an instance of Deezer API by initializing it:
 ```swift
 import DeezerAPI
 
-@State var deezer: DeezerAPI = DeezerAPI(clientId: "YOUR_APP_ID", clientSecret: "YOUR_SECRET_ID", redirect_uri: "YOUR_REDIRECT_ID", permissions: "basic_access,manage_library,listening_history")
+@State var deezer: DeezerAPI = DeezerAPI(clientId: "YOUR_APP_ID",
+                                         clientSecret: "YOUR_SECRET_ID",
+                                         redirect_uri: "YOUR_REDIRECT_ID",
+                                         permissions: "basic_access,manage_library,listening_history")
 ```
 
 Note: Of course you can choose whatever you want for permissions
