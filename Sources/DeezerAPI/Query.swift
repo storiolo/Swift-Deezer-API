@@ -16,15 +16,15 @@ extension DeezerAPI {
     ///example:
     ///- request_url?access_token=XXXX&post=value
     func makedataURL(request: String, post: String? = nil) -> URL? {
-        let queryItems = [URLQueryItem(name: "access_token", value: self.accessToken.value)]
-        var urlComps = URLComponents(string: request)!
-        urlComps.queryItems = queryItems
-        var url = urlComps.url!
-        
+        //add post if exist
+        let url: String
         if let post = post {
-            url = URL(string: "&"+post, relativeTo: url)!
+            url = request + "&" + post + "access_token=" + accessToken.value
+        } else {
+            url = request + "&access_token=" + accessToken.value
         }
-        return url
+        
+        return URL(string: url)!
     }
     
     
@@ -37,7 +37,15 @@ extension DeezerAPI {
             //If not in connected repeat until it is
             while self.state.value != .connected {}
             
-            AF.request(makedataURL(request: DeezerAPI.base_url+url)!, method: .get).responseData { response in
+            //verify url has not been already made (next method don't need to construct it)
+            let dataURL: URL
+            if url.contains("https://") {
+                dataURL = URL(string: url)!
+            } else {
+                dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
+            }
+            
+            AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
                 case .success(let data):
                     do {
@@ -84,23 +92,54 @@ extension DeezerAPI {
     }
     
     //https://api.deezer.com/album/ALBUM_ID
-    public func getAlbum(album_id: String, completed: @escaping (DeezerAlbum?) -> Void) {
-        self.query(DeezerAlbum.self, url: "album/"+album_id, completed: completed)
+    public func getAlbum(album_id: Int, completed: @escaping (DeezerAlbum?) -> Void) {
+        self.query(DeezerAlbum.self, url: "album/"+String(album_id), completed: completed)
     }
     
     
     //https://api.deezer.com/playlist/PLAYLIST_ID/tracks
-    public func getTracks(playlist_id: String, completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.query(DeezerDataTrack.self, url: "playlist/"+playlist_id+"/tracks", completed: completed)
+    ///getTracks will get 25 first tracks of the playlist
+    ///you'll have to do Next Method
+    public func getTracks(playlist_id: Int, completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.query(DeezerDataTrack.self, url: "playlist/"+String(playlist_id)+"/tracks", completed: completed)
     }
+    
+    ///getAllTracks will get all tracks of the playlist
+    ///
+    ///index is the index starting point, don't fill it if you want all tracks
+    public func getAllTracks(playlist_id: Int, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
+        var concatenatedTracks: [DeezerTrack] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataTrack.self, url: "playlist/\(playlist_id)/tracks", post: "index=\(index)") { tracks in
+                if let tracks = tracks {
+                    concatenatedTracks.append(contentsOf: tracks.data ?? [])
+                    
+                    if let _ = tracks.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataTrack(data: concatenatedTracks,
+                                                  total: tracks.total,
+                                                  checksum: tracks.checksum,
+                                                  next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+
     
     
     
     
     
     //https://api.deezer.com/artist/ARTIST_ID
-    public func getArtist(artist_id: String, completed: @escaping (DeezerArtist?) -> Void) {
-        self.query(DeezerArtist.self, url: "artist/"+artist_id, completed: completed)
+    public func getArtist(artist_id: Int, completed: @escaping (DeezerArtist?) -> Void) {
+        self.query(DeezerArtist.self, url: "artist/"+String(artist_id), completed: completed)
     }
     
     
@@ -123,15 +162,16 @@ extension DeezerAPI {
     
     //https://api.deezer.com/playlist/PLATLIST_ID/tracks?songs=id1,id2...
     ///return true/false
-    public func addTracksToPlaylist(playlist_id: String, tracks_id: [String], completed: @escaping (Bool?) -> Void) {
-        self.query(Bool.self, url: "playlist/"+playlist_id+"/tracks", post: "songs="+tracks_id.joined(separator: ","), completed: completed)
+    public func addTracksToPlaylist(playlist_id: Int, tracks_id: [Int], completed: @escaping (Bool?) -> Void) {
+        let tracks_idString = tracks_id.map { String($0) }.joined(separator: ",")
+        self.query(Bool.self, url: "playlist/"+String(playlist_id)+"/tracks", post: "songs="+tracks_idString, completed: completed)
     }
     
     
     //https://api.deezer.com/user/me/tracks?track_id=
     ///return true/false
-    public func addTrackToFavorite(track_id: String, completed: @escaping (Bool?) -> Void) {
-        self.query(Bool.self, url: "user/me/tracks", post: "track_id="+track_id, completed: completed)
+    public func addTrackToFavorite(track_id: Int, completed: @escaping (Bool?) -> Void) {
+        self.query(Bool.self, url: "user/me/tracks", post: "track_id="+String(track_id), completed: completed)
     }
     
     
@@ -139,7 +179,9 @@ extension DeezerAPI {
     //<<---- Next Method ---->>\\
     
     //https://api.deezer.com/LAST_GET_METHOD?index=
-    //get Next
+    public func getNext<T: Decodable>(_ type: T.Type, urlNext: String, completed: @escaping (T?) -> Void) {
+        self.query(type, url: "user/me/tracks", completed: completed)
+    }
     
     
     

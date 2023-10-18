@@ -106,6 +106,7 @@ getUser()
 getUserPlaylists()
 getAlbum(album_id: String)
 getTracks(playlist_id: String)
+getAllTracks(playlist_id: Int)
 getArtist(artist_id: String)
 getHistory()
 
@@ -117,7 +118,7 @@ addTrackToFavorite(track_id: String)
 
 
 //<<---- Next Method ---->>\\
-//getNext() -> IN PROGRESS
+//getNext(type: Type, urlNext: String)
 
 
 //<<---- Search Method ---->>\\
