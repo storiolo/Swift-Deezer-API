@@ -126,6 +126,9 @@ SearchAlbum(search: String)
 SearchArtist(search: String)
 SearchPlaylist(search: String)
 SearchTrack(search: String)
+
+//<<---- Image Method ---->>\\
+getImageAlbum(coverURL: String)
 ```
 
 

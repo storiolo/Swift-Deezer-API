@@ -3,8 +3,14 @@
 //
 
 import Foundation
-
 import Alamofire
+
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
+
 
 extension DeezerAPI {
     
@@ -202,6 +208,32 @@ extension DeezerAPI {
     }
     public func SearchTrack(search: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "search/track", post: "q"+search, completed: completed)
+    }
+    
+    
+    
+    //<<---- Image Method ---->>\\
+    
+    public func getImageAlbum(coverURL: String, completion: @escaping (UIImage?) -> Void) {
+        #if canImport(UIKit)
+            AF.request(URL(string: coverURL)!).responseData { response in
+                switch response.result {
+                case .success(let data):
+                    if let image = UIImage(data: data) {
+                        completion(image)
+                    } else {
+                        print("deezer: Image data cannot been downloaded")
+                        completion(nil)
+                    }
+                case .failure(let error):
+                    print("deezer: Image data cannot been downloaded - \(error)")
+                    completion(nil)
+                }
+            }
+        #else
+            print("deezer: UIKit is not imported")
+            completion(nil)
+        #endif
     }
     
 }
