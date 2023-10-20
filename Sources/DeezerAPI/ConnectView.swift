@@ -54,7 +54,7 @@ extension DeezerAPI {
             
 //            .onChange(of: self.state) { newState in}
             .onReceive(timer) { _ in
-//                self.state = deezer.getState()
+                self.state = deezer.getState()
             }
         }
     }
