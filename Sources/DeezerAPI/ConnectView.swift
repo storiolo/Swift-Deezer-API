@@ -2,7 +2,6 @@
 //  Created by Nicolas Storiolo on 17/10/2023.
 //
 
-#if os(iOS)
 
 import SwiftUI
 import WebKit
@@ -34,8 +33,7 @@ extension DeezerAPI {
         public init(deezer: Binding<DeezerAPI>) {
             self._deezer = deezer
         }
-        
-        
+
         public var body: some View {
             VStack {
                 if self.state == .start {
@@ -51,8 +49,6 @@ extension DeezerAPI {
                 
             }
             .frame(width: 0, height: 0) //hide to user
-            
-//            .onChange(of: self.state) { newState in}
             .onReceive(timer) { _ in
                 self.state = deezer.getState()
             }
@@ -166,4 +162,3 @@ extension DeezerAPI {
         }
     }
 }
-#endif
