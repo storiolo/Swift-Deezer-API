@@ -41,11 +41,12 @@ extension DeezerAPI {
                 if self.state == .start {
                     if let url = deezer.makeAuthorizationURL(){
                         WebView(deezer: $deezer, url: url, autoclick: true)
-                            .frame(width: 0, height: 0) //hide to user
                     }
                 }
                 
             }
+            .frame(width: 0, height: 0) //hide to user
+            
 //            .onChange(of: self.state) { newState in}
             .onReceive(timer) { _ in
                 self.state = deezer.getState()
