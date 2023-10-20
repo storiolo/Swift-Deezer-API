@@ -50,7 +50,6 @@ extension DeezerAPI {
             } else {
                 dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
             }
-            
             AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
                 case .success(let data):

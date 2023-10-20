@@ -43,6 +43,9 @@ public struct DeezerAPI {
     public func setToken(_ token: String){
         self.token.value = token
     }
+    public func setAccessToken(_ accesstoken: String){
+        self.accessToken.value = accesstoken
+    }
     public func setState(_ state: ConnectState){
         self.state.value = state
     }
@@ -63,5 +66,6 @@ public struct DeezerAPI {
     public func isConnected() -> Bool {
         return self.state.value == .connected
     }
+    
     
 }

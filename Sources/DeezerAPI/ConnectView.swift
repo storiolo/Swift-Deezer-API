@@ -43,24 +43,18 @@ extension DeezerAPI {
                         WebView(deezer: $deezer, url: url, autoclick: true)
                     }
                 }
+                if self.state == .tokenFound {
+                    if let url = deezer.makeAuthentificationURL(){
+                        WebView(deezer: $deezer, url: url, autoclick: false)
+                    }
+                }
                 
             }
             .frame(width: 0, height: 0) //hide to user
             
 //            .onChange(of: self.state) { newState in}
             .onReceive(timer) { _ in
-                self.state = deezer.getState()
-                if self.state == .tokenFound {
-                    deezer.get_accessToken(){ success in
-                        if success {
-                            deezer.setState(.connected)
-                            print("deezer: connected")
-                        } else {
-                            deezer.setState(.fail)
-                            print("deezer: did not found accessToken")
-                        }
-                    }
-                }
+//                self.state = deezer.getState()
             }
         }
     }
@@ -97,10 +91,9 @@ extension DeezerAPI {
             //Auto Click
             func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
                 if parent.autoclick {
-                    
-                    //Check if url is the original one
+                    //Check if url is the Token Url
                     webView.evaluateJavaScript("window.location.href", completionHandler: { (result, error) in
-                        if let url = result as? String, url == self.parent.url.absoluteString {
+                        if let url = result as? String, URL(string: url) == self.parent.deezer.makeAuthorizationURL() {
                             
                             //AutoClick NOW!
                             let javascript = "document.getElementsByName('continue')[0].click();"
@@ -108,13 +101,41 @@ extension DeezerAPI {
                                 if let _ = error {
                                     print("deezer: No Token Found")
                                     self.parent.deezer.setState(.fail)
-                                    self.parent.deezer.isShowingView = false
                                 }
                             }
 
                         }
                     })
                 }
+                
+                
+                //Check if url is the access Token Url
+                webView.evaluateJavaScript("window.location.href", completionHandler: { (result, error) in
+                    if let url = result as? String, URL(string: url) == self.parent.deezer.makeAuthentificationURL() {
+                        
+                        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()") { (result, error) in
+                            if let data = result as? String {
+                                if let accessTokenRange = data.range(of: "access_token=") {
+                                    let accessTokenStart = accessTokenRange.upperBound
+                                    let accessTokenEnd: String.Index
+                                    if let range = data.range(of: "&", options: [], range: accessTokenStart ..< data.endIndex) {
+                                        accessTokenEnd = range.lowerBound
+                                    } else {
+                                        accessTokenEnd = data.endIndex
+                                    }
+                                    
+                                    self.parent.deezer.setAccessToken(String(data[accessTokenStart..<accessTokenEnd]))
+                                    self.parent.deezer.setState(.connected)
+                                    print("deezer: Access Token loaded")
+                                } else {
+                                    print("deezer: No Access Token Found")
+                                    self.parent.deezer.setState(.fail)
+                                }
+                            }
+                        }
+                    }
+                })
+                
             }
             
             //Get the Token
@@ -128,6 +149,8 @@ extension DeezerAPI {
                                         print("deezer: Found Token")
                                         self.parent.deezer.setToken(code)
                                         self.parent.deezer.setState(.tokenFound)
+                                        
+                                        //if it is from Connect View
                                         parent.deezer.isShowingView = false
                                     }
                                 }
@@ -135,8 +158,11 @@ extension DeezerAPI {
                         }
                     }
                 }
+                
                 decisionHandler(.allow)
             }
+            
+            
         }
     }
 }
