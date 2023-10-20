@@ -1,6 +1,5 @@
 # DeezerAPI
-
-**A Swift library for the Deezer web API**
+**A Swift library for the Deezer API**
 
 ## Supported Platforms
 
