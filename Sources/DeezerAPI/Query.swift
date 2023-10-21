@@ -5,9 +5,15 @@
 import Foundation
 import Alamofire
 
-
-#if canImport(UIKit)
+#if canImport(SwiftUI)
+import SwiftUI
+#endif
+#if canImport(AppKit)
+import AppKit
+typealias PlatformImage = NSImage
+#elseif canImport(UIKit)
 import UIKit
+typealias PlatformImage = UIImage
 #endif
 
 
@@ -212,27 +218,35 @@ extension DeezerAPI {
     
     
     //<<---- Image Method ---->>\\
-    
-    public func getImageAlbum(coverURL: String, completion: @escaping (UIImage?) -> Void) {
-        #if canImport(UIKit)
-            AF.request(URL(string: coverURL)!).responseData { response in
-                switch response.result {
-                case .success(let data):
-                    if let image = UIImage(data: data) {
-                        completion(image)
+    #if (canImport(AppKit) || canImport(UIKit)) && canImport(SwiftUI)
+    public func getImageAlbum(coverURL: String, completion: @escaping (Image?) -> Void) {
+        AF.request(URL(string: coverURL)!).responseData { response in
+            switch response.result {
+            case .success(let data):
+                #if canImport(AppKit) || canImport(UIKit)
+                    if let image = PlatformImage(data: data) {
+                        #if canImport(AppKit)
+                            completion(Image(nsImage: image))
+                        #elseif canImport(UIKit)
+                            completion(Image(uiImage: image))
+                        #else
+                            print("deezer: Image data cannot be converted to Image")
+                            completion(nil)
+                        #endif
                     } else {
-                        print("deezer: Image data cannot been downloaded")
+                        print("deezer: Image data cannot be converted to Image")
                         completion(nil)
                     }
-                case .failure(let error):
-                    print("deezer: Image data cannot been downloaded - \(error)")
+                #else
+                    print("deezer: Image data cannot been downloaded")
                     completion(nil)
-                }
+                #endif
+            case .failure(let error):
+                print("deezer: Image data cannot been downloaded - \(error)")
+                completion(nil)
             }
-        #else
-            print("deezer: UIKit is not imported")
-            completion(nil)
-        #endif
+        }
     }
+    #endif
     
 }

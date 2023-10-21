@@ -1,8 +1,6 @@
 //
 //  Created by Nicolas Storiolo on 17/10/2023.
 //
-
-
 import SwiftUI
 import WebKit
 

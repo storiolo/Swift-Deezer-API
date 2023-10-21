@@ -3,7 +3,6 @@ A Swift library for the Deezer API
 
 ## Supported Platforms
 
-Actually in Progress (only iOS 15+ working) but it will support:
 * Swift 5.3+
 * iOS 13+
 * macOS 10.15+
