@@ -114,6 +114,10 @@ extension DeezerAPI {
     public func getTracks(playlist_id: Int, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "playlist/"+String(playlist_id)+"/tracks", completed: completed)
     }
+    //https://api.deezer.com/user/me/personal_songs
+    public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.query(DeezerDataTrack.self, url: "user/me/personal_songs", completed: completed)
+    }
     
     ///getAllTracks will get all tracks of the playlist
     ///
@@ -123,6 +127,30 @@ extension DeezerAPI {
         
         func recursiveGetAllTracks(index: Int) {
             self.query(DeezerDataTrack.self, url: "playlist/\(playlist_id)/tracks", post: "index=\(index)") { tracks in
+                if let tracks = tracks {
+                    concatenatedTracks.append(contentsOf: tracks.data ?? [])
+                    
+                    if let _ = tracks.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataTrack(data: concatenatedTracks,
+                                                  total: tracks.total,
+                                                  checksum: tracks.checksum,
+                                                  next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+    public func getAllUserTracks(index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
+        var concatenatedTracks: [DeezerTrack] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataTrack.self, url: "user/me/personal_songs", post: "index=\(index)") { tracks in
                 if let tracks = tracks {
                     concatenatedTracks.append(contentsOf: tracks.data ?? [])
                     
