@@ -122,7 +122,7 @@ extension DeezerAPI {
     ///getAllTracks will get all tracks of the playlist
     ///
     ///index is the index starting point, don't fill it if you want all tracks
-    public func getAllTracks(playlist_id: Int, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
+    public func getAllTracks(playlist_id: String, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
         var concatenatedTracks: [DeezerTrack] = []
         
         func recursiveGetAllTracks(index: Int) {
