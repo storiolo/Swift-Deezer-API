@@ -103,16 +103,16 @@ extension DeezerAPI {
     }
     
     //https://api.deezer.com/album/ALBUM_ID
-    public func getAlbum(album_id: Int, completed: @escaping (DeezerAlbum?) -> Void) {
-        self.query(DeezerAlbum.self, url: "album/"+String(album_id), completed: completed)
+    public func getAlbum(album_id: String, completed: @escaping (DeezerAlbum?) -> Void) {
+        self.query(DeezerAlbum.self, url: "album/"+album_id, completed: completed)
     }
     
     
     //https://api.deezer.com/playlist/PLAYLIST_ID/tracks
     ///getTracks will get 25 first tracks of the playlist
     ///you'll have to do Next Method
-    public func getTracks(playlist_id: Int, completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.query(DeezerDataTrack.self, url: "playlist/"+String(playlist_id)+"/tracks", completed: completed)
+    public func getTracks(playlist_id: String, completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.query(DeezerDataTrack.self, url: "playlist/"+playlist_id+"/tracks", completed: completed)
     }
     //https://api.deezer.com/user/me/personal_songs
     public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
@@ -177,8 +177,8 @@ extension DeezerAPI {
     
     
     //https://api.deezer.com/artist/ARTIST_ID
-    public func getArtist(artist_id: Int, completed: @escaping (DeezerArtist?) -> Void) {
-        self.query(DeezerArtist.self, url: "artist/"+String(artist_id), completed: completed)
+    public func getArtist(artist_id: String, completed: @escaping (DeezerArtist?) -> Void) {
+        self.query(DeezerArtist.self, url: "artist/"+artist_id, completed: completed)
     }
     
     
@@ -201,16 +201,16 @@ extension DeezerAPI {
     
     //https://api.deezer.com/playlist/PLATLIST_ID/tracks?songs=id1,id2...
     ///return true/false
-    public func addTracksToPlaylist(playlist_id: Int, tracks_id: [Int], completed: @escaping (Bool?) -> Void) {
-        let tracks_idString = tracks_id.map { String($0) }.joined(separator: ",")
-        self.query(Bool.self, url: "playlist/"+String(playlist_id)+"/tracks", post: "songs="+tracks_idString, completed: completed)
+    public func addTracksToPlaylist(playlist_id: String, tracks_id: [String], completed: @escaping (Bool?) -> Void) {
+        let tracks_idString = tracks_id.joined(separator: ",")
+        self.query(Bool.self, url: "playlist/"+playlist_id+"/tracks", post: "songs="+tracks_idString, completed: completed)
     }
     
     
     //https://api.deezer.com/user/me/tracks?track_id=
     ///return true/false
-    public func addTrackToFavorite(track_id: Int, completed: @escaping (Bool?) -> Void) {
-        self.query(Bool.self, url: "user/me/tracks", post: "track_id="+String(track_id), completed: completed)
+    public func addTrackToFavorite(track_id: String, completed: @escaping (Bool?) -> Void) {
+        self.query(Bool.self, url: "user/me/tracks", post: "track_id="+track_id, completed: completed)
     }
     
     
