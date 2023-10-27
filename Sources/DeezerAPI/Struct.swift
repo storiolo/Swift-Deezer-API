@@ -4,18 +4,6 @@
 
 import Foundation
 
-public enum ConnectState: String {
-    case start
-    case tokenFound
-    case connected
-    case fail
-}
-class _DeezerValue_<T> {
-  var value: T
-  init(_ value: T) { self.value = value }
-}
-
-
 
 
 //Error

@@ -25,7 +25,7 @@ extension DeezerAPI {
 
         let queryItems = [URLQueryItem(name: "app_id", value: self.clientId),
                           URLQueryItem(name: "secret", value: self.clientSecret),
-                          URLQueryItem(name: "code", value: self.token.value)]
+                          URLQueryItem(name: "code", value: self.getToken())]
         var urlComps = URLComponents(string: self.authentificationURL)!
         urlComps.queryItems = queryItems
         return urlComps.url!
