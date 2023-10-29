@@ -4,18 +4,6 @@
 
 import Foundation
 
-public enum ConnectState: String {
-    case start
-    case tokenFound
-    case connected
-    case fail
-}
-class _DeezerValue_<T> {
-  var value: T
-  init(_ value: T) { self.value = value }
-}
-
-
 
 
 //Error
@@ -30,6 +18,12 @@ struct ErrorDetails: Codable {
 
 
 //<<---- DATA ---->>\\
+public struct DeezerDataUser: Decodable {
+    public let data: [DeezerUser]?
+    public let total: Int?
+    public let checksum: String?
+    public let next: String?
+}
 
 public struct DeezerUser: Decodable {
     public let id: Int?

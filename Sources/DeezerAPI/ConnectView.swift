@@ -4,19 +4,22 @@
 import SwiftUI
 import WebKit
 
+
 extension DeezerAPI {
     
     ///ConnectView is used to display page to connect
     public struct ConnectView: View {
-        @Binding var deezer: DeezerAPI
+        var deezer: DeezerAPI
+        @Binding var isShowingView: Bool
         
-        public init(deezer: Binding<DeezerAPI>) {
-            self._deezer = deezer
+        public init(deezer: DeezerAPI, isShowingView: Binding<Bool>) {
+            self.deezer = deezer
+            self._isShowingView = isShowingView
         }
         
         public var body: some View {
             if let url = deezer.makeAuthorizationURL(){
-                WebView(deezer: $deezer, url: url, autoclick: false)
+                WebView(deezer: deezer, url: url, autoclick: false, isShowingView: $isShowingView)
             }
         }
     }
@@ -24,27 +27,29 @@ extension DeezerAPI {
     ///AutoConnect is used to autoConnect when user has already connected to Deezer ;
     ///it will do the connect flow automatically
     public struct AutoConnect: View {
-        @Binding var deezer: DeezerAPI
+        var deezer: DeezerAPI
         private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        @State var state: ConnectState = .start
+        @State var state: String = "connected"
         
-        public init(deezer: Binding<DeezerAPI>) {
-            self._deezer = deezer
+        public init(deezer: DeezerAPI) {
+            self.deezer = deezer
+            if deezer.getState() == "connected" {
+                print("Deezer: is connected")
+            }
         }
 
         public var body: some View {
             VStack {
-                if self.state == .start {
+                if self.state == "start" {
                     if let url = deezer.makeAuthorizationURL(){
-                        WebView(deezer: $deezer, url: url, autoclick: true)
+                        WebView(deezer: deezer, url: url, autoclick: true, isShowingView: Binding.constant(false))
                     }
                 }
-                if self.state == .tokenFound {
+                if self.state == "tokenFound" {
                     if let url = deezer.makeAuthentificationURL(){
-                        WebView(deezer: $deezer, url: url, autoclick: false)
+                        WebView(deezer: deezer, url: url, autoclick: false, isShowingView: Binding.constant(false))
                     }
                 }
-                
             }
             .frame(width: 0, height: 0) //hide to user
             .onReceive(timer) { _ in
@@ -53,10 +58,14 @@ extension DeezerAPI {
         }
     }
     
+    
+    
+    
     struct WebView: UIViewRepresentable {
-        @Binding var deezer: DeezerAPI
+        var deezer: DeezerAPI
         var url: URL
         var autoclick: Bool
+        @Binding var isShowingView: Bool
         
         
         func makeUIView(context: Context) -> WKWebView {
@@ -94,7 +103,7 @@ extension DeezerAPI {
                             webView.evaluateJavaScript(javascript) { (result, error) in
                                 if let _ = error {
                                     print("deezer: No Token Found")
-                                    self.parent.deezer.setState(.fail)
+                                    self.parent.deezer.setState("fail")
                                 }
                             }
 
@@ -118,12 +127,13 @@ extension DeezerAPI {
                                         accessTokenEnd = data.endIndex
                                     }
                                     
-                                    self.parent.deezer.setAccessToken(String(data[accessTokenStart..<accessTokenEnd]))
-                                    self.parent.deezer.setState(.connected)
+                                    let accToken = String(data[accessTokenStart..<accessTokenEnd])
+                                    self.parent.deezer.setAccessToken(accToken)
+                                    self.parent.deezer.setState("connected")
                                     print("deezer: Access Token loaded")
                                 } else {
                                     print("deezer: No Access Token Found")
-                                    self.parent.deezer.setState(.fail)
+                                    self.parent.deezer.setState("fail")
                                 }
                             }
                         }
@@ -142,10 +152,10 @@ extension DeezerAPI {
                                     if let code = item.value {
                                         print("deezer: Found Token")
                                         self.parent.deezer.setToken(code)
-                                        self.parent.deezer.setState(.tokenFound)
+                                        self.parent.deezer.setState("tokenFound")
                                         
                                         //if it is from Connect View
-                                        parent.deezer.isShowingView = false
+                                        parent.isShowingView = false
                                     }
                                 }
                             }

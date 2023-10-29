@@ -31,9 +31,9 @@ extension DeezerAPI {
         //add post if exist
         let url: String
         if let post = post {
-            url = request + "&" + post + "access_token=" + accessToken.value
+            url = request + "&" + post + "&access_token=" + self.getAccessToken()
         } else {
-            url = request + "&access_token=" + accessToken.value
+            url = request + "&access_token=" + self.getAccessToken()
         }
         
         return URL(string: url)!
@@ -47,7 +47,7 @@ extension DeezerAPI {
     func query<T: Decodable>(_ type: T.Type, url: String, post: String? = nil, completed: @escaping (T?) -> Void) {
         Task {
             //If not in connected repeat until it is
-            while self.state.value != .connected {}
+            while !self.isConnected() {}
             
             //verify url has not been already made (next method don't need to construct it)
             let dataURL: URL
@@ -56,6 +56,7 @@ extension DeezerAPI {
             } else {
                 dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
             }
+//            print(dataURL)
             AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
                 case .success(let data):
@@ -67,7 +68,7 @@ extension DeezerAPI {
                             print("deezer: Not Connected")
                             
                             //reconnect
-                            self.state.value = .start
+                            self.setState("start")
                             
                             //redo it
                             self.query(T.self, url: url, completed: completed)
@@ -97,10 +98,69 @@ extension DeezerAPI {
         self.query(DeezerUser.self, url: "user/me", completed: completed)
     }
     
+    //https://api.deezer.com/user/me/followings
+    public func getFollowing(completed: @escaping (DeezerDataUser?) -> Void) {
+        self.query(DeezerDataUser.self, url: "user/me/followings", completed: completed)
+    }
+    
     //https://api.deezer.com/user/me/playlists
     public func getUserPlaylists(completed: @escaping (DeezerDataPlaylist?) -> Void) {
         self.query(DeezerDataPlaylist.self, url: "user/me/playlists", completed: completed)
     }
+    public func getAllUserPlaylists(index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        var concatenatedTracks: [DeezerPlaylist] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataPlaylist.self, url: "user/me/playlists", post: "index=\(index)") { playlists in
+                if let playlists = playlists {
+                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
+                    
+                    if let _ = playlists.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataPlaylist(data: concatenatedTracks,
+                                                     total: playlists.total,
+                                                     checksum: playlists.checksum,
+                                                     next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+    public func getPlaylistsOfUser(user_id: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", completed: completed)
+    }
+    public func getAllPlaylistsOfUser(user_id: String, index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        var concatenatedTracks: [DeezerPlaylist] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", post: "index=\(index)") { playlists in
+                if let playlists = playlists {
+                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
+                    
+                    if let _ = playlists.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataPlaylist(data: concatenatedTracks,
+                                                     total: playlists.total,
+                                                     checksum: playlists.checksum,
+                                                     next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+    
+    
+    
     
     //https://api.deezer.com/album/ALBUM_ID
     public func getAlbum(album_id: String, completed: @escaping (DeezerAlbum?) -> Void) {
@@ -114,14 +174,6 @@ extension DeezerAPI {
     public func getTracks(playlist_id: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "playlist/"+playlist_id+"/tracks", completed: completed)
     }
-    //https://api.deezer.com/user/me/personal_songs
-    public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.query(DeezerDataTrack.self, url: "user/me/personal_songs", completed: completed)
-    }
-    
-    ///getAllTracks will get all tracks of the playlist
-    ///
-    ///index is the index starting point, don't fill it if you want all tracks
     public func getAllTracks(playlist_id: String, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
         var concatenatedTracks: [DeezerTrack] = []
         
@@ -146,29 +198,38 @@ extension DeezerAPI {
         
         recursiveGetAllTracks(index: index)
     }
-    public func getAllUserTracks(index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
-        var concatenatedTracks: [DeezerTrack] = []
-        
-        func recursiveGetAllTracks(index: Int) {
-            self.query(DeezerDataTrack.self, url: "user/me/personal_songs", post: "index=\(index)") { tracks in
-                if let tracks = tracks {
-                    concatenatedTracks.append(contentsOf: tracks.data ?? [])
-                    
-                    if let _ = tracks.next {
-                        recursiveGetAllTracks(index: index + 25)
-                    } else {
-                        completed(DeezerDataTrack(data: concatenatedTracks,
-                                                  total: tracks.total,
-                                                  checksum: tracks.checksum,
-                                                  next: nil))
+    
+    
+    //https://api.deezer.com/user/me/personal_songs
+    public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.getUserPlaylists(){ results in
+            if let results = results?.data {
+                for result in results {
+                    if result.title == "Loved tracks" {
+                        if let id = result.id {
+                            self.getTracks(playlist_id: String(id)){ tracks in
+                                completed(tracks)
+                            }
+                        }
                     }
-                } else {
-                    completed(nil)
                 }
             }
         }
-        
-        recursiveGetAllTracks(index: index)
+    }
+    public func getAllUserTracks(index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.getUserPlaylists(){ results in
+            if let results = results?.data {
+                for result in results {
+                    if result.title == "Loved tracks" {
+                        if let id = result.id {
+                            self.getAllTracks(playlist_id: String(id)){ tracks in
+                                completed(tracks)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     

@@ -6,9 +6,6 @@ import Foundation
 
 
 public struct DeezerAPI {
-    
-    public var isShowingView = false
-    
     public var clientId = ""
     public var clientSecret = ""
     public var redirect_uri = ""
@@ -16,12 +13,6 @@ public struct DeezerAPI {
     
     public let authorizeUrl = "https://connect.deezer.com/oauth/auth.php"
     public let authentificationURL = "https://connect.deezer.com/oauth/access_token.php"
-    
-    private(set) var accessToken: _DeezerValue_<String> = _DeezerValue_("")
-    private(set) var token: _DeezerValue_<String> = _DeezerValue_("")
-    private(set) var state: _DeezerValue_<ConnectState> = _DeezerValue_(.start)
-
-    
     
     ///- <<---- Flow ---->>\\
     ///1. if no login entered ConnectView
@@ -38,31 +29,49 @@ public struct DeezerAPI {
     
     //<<---- Accessor ---->>\\
     
-    public func setToken(_ token: String){
-        self.token.value = token
+    public func setState(_ state: String){
+        UserDefaults.standard.set(state, forKey: "DeezerAPI_state")
     }
     public func setAccessToken(_ accesstoken: String){
-        self.accessToken.value = accesstoken
+        UserDefaults.standard.set(accesstoken, forKey: "DeezerAPI_accessToken")
     }
-    public func setState(_ state: ConnectState){
-        self.state.value = state
+    public func setToken(_ token: String){
+        UserDefaults.standard.set(token, forKey: "DeezerAPI_token")
     }
-    public func getState() -> ConnectState{
-        return self.state.value
-    }
+
     
-    
+//        case start
+//        case tokenFound
+//        case connected
+//        case fail
+    public func getState() -> String {
+        if let state = UserDefaults.standard.string(forKey: "DeezerAPI_state") {
+            return state
+        } else {
+            return "start"
+        }
+    }
     public func getAccessToken() -> String {
-        return self.accessToken.value
+        if let accessToken = UserDefaults.standard.string(forKey: "DeezerAPI_accessToken") {
+            return accessToken
+        } else {
+            print("Deezer: No access Token retrieved")
+            self.setState("start")
+            return ""
+        }
     }
     public func getToken() -> String {
-        return self.token.value
+        if let token = UserDefaults.standard.string(forKey: "DeezerAPI_token") {
+            return token
+        } else {
+            return ""
+        }
     }
     
     
     ///Return true if user is connected
     public func isConnected() -> Bool {
-        return self.state.value == .connected
+        return getState() == "connected"
     }
     
     
