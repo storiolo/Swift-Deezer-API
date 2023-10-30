@@ -90,7 +90,7 @@ extension DeezerAPI {
                 webView.navigationDelegate = context.coordinator
                 return webView
             }
-            func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+            func updateNSView(_ nsView: WKWebView, context: Context) {
                 let request = URLRequest(url: self.url)
                 nsView.load(request)
             }
