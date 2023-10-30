@@ -4,6 +4,12 @@
 import SwiftUI
 import WebKit
 
+#if os(iOS) || os(watchOS) || os(tvOS)
+    typealias ViewRepresentable = UIViewRepresentable
+#elseif os(macOS)
+    typealias ViewRepresentable = NSViewRepresentable
+#endif
+
 
 extension DeezerAPI {
     
@@ -61,7 +67,7 @@ extension DeezerAPI {
     
     
     
-    struct WebView: UIViewRepresentable {
+    struct WebView: ViewRepresentable {
         var deezer: DeezerAPI
         var url: URL
         var autoclick: Bool
