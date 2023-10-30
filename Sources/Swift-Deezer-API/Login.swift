@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import Alamofire
 
 extension DeezerAPI {
     //<<---- Login ---->>\\
