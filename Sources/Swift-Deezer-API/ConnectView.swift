@@ -85,7 +85,7 @@ extension DeezerAPI {
                 uiView.load(request)
             }
         #elseif os(macOS)
-            func makeNSView(context: Context) -> NSVisualEffectView {
+            func makeNSView(context: Context) -> WKWebView {
                 let webView = WKWebView()
                 webView.navigationDelegate = context.coordinator
                 return webView
