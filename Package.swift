@@ -24,6 +24,6 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Swift-Deezer-API",
-            dependencies: [.product(name: "Alamofire", package: "Alamofire")]),
+            dependencies: ["Alamofire"]),
     ]
 )
