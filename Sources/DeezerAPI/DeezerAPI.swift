@@ -38,7 +38,7 @@ public struct DeezerAPI {
     public func setToken(_ token: String){
         UserDefaults.standard.set(token, forKey: "DeezerAPI_token")
     }
-    
+
     
 //        case start
 //        case tokenFound

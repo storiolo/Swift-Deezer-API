@@ -50,7 +50,6 @@ extension DeezerAPI {
                         WebView(deezer: deezer, url: url, autoclick: false, isShowingView: Binding.constant(false))
                     }
                 }
-                
             }
             .frame(width: 0, height: 0) //hide to user
             .onReceive(timer) { _ in

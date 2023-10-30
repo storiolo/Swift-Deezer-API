@@ -56,6 +56,7 @@ extension DeezerAPI {
             } else {
                 dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
             }
+//            print(dataURL)
             AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
                 case .success(let data):
@@ -97,10 +98,74 @@ extension DeezerAPI {
         self.query(DeezerUser.self, url: "user/me", completed: completed)
     }
     
+    //https://api.deezer.com/track/TRACK_ID
+    public func getTrack(track_id: String, completed: @escaping (DeezerTrack?) -> Void) {
+        self.query(DeezerTrack.self, url: "track/"+track_id, completed: completed)
+    }
+    
+    //https://api.deezer.com/user/me/followings
+    public func getFollowing(completed: @escaping (DeezerDataUser?) -> Void) {
+        self.query(DeezerDataUser.self, url: "user/me/followings", completed: completed)
+    }
+    
     //https://api.deezer.com/user/me/playlists
     public func getUserPlaylists(completed: @escaping (DeezerDataPlaylist?) -> Void) {
         self.query(DeezerDataPlaylist.self, url: "user/me/playlists", completed: completed)
     }
+    public func getAllUserPlaylists(index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        var concatenatedTracks: [DeezerPlaylist] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataPlaylist.self, url: "user/me/playlists", post: "index=\(index)") { playlists in
+                if let playlists = playlists {
+                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
+                    
+                    if let _ = playlists.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataPlaylist(data: concatenatedTracks,
+                                                     total: playlists.total,
+                                                     checksum: playlists.checksum,
+                                                     next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+    public func getPlaylistsOfUser(user_id: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", completed: completed)
+    }
+    public func getAllPlaylistsOfUser(user_id: String, index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        var concatenatedTracks: [DeezerPlaylist] = []
+        
+        func recursiveGetAllTracks(index: Int) {
+            self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", post: "index=\(index)") { playlists in
+                if let playlists = playlists {
+                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
+                    
+                    if let _ = playlists.next {
+                        recursiveGetAllTracks(index: index + 25)
+                    } else {
+                        completed(DeezerDataPlaylist(data: concatenatedTracks,
+                                                     total: playlists.total,
+                                                     checksum: playlists.checksum,
+                                                     next: nil))
+                    }
+                } else {
+                    completed(nil)
+                }
+            }
+        }
+        
+        recursiveGetAllTracks(index: index)
+    }
+    
+    
+    
     
     //https://api.deezer.com/album/ALBUM_ID
     public func getAlbum(album_id: String, completed: @escaping (DeezerAlbum?) -> Void) {
@@ -114,26 +179,6 @@ extension DeezerAPI {
     public func getTracks(playlist_id: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "playlist/"+playlist_id+"/tracks", completed: completed)
     }
-    //https://api.deezer.com/user/me/personal_songs
-    public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.getUserPlaylists(){ results in
-            if let results = results?.data {
-                for result in results {
-                    if result.title == "Loved tracks" {
-                        if let id = result.id {
-                            self.getTracks(playlist_id: String(id)){ tracks in
-                                completed(tracks)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    ///getAllTracks will get all tracks of the playlist
-    ///
-    ///index is the index starting point, don't fill it if you want all tracks
     public func getAllTracks(playlist_id: String, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
         var concatenatedTracks: [DeezerTrack] = []
         
@@ -157,6 +202,24 @@ extension DeezerAPI {
         }
         
         recursiveGetAllTracks(index: index)
+    }
+    
+    
+    //https://api.deezer.com/user/me/personal_songs
+    public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.getUserPlaylists(){ results in
+            if let results = results?.data {
+                for result in results {
+                    if result.title == "Loved tracks" {
+                        if let id = result.id {
+                            self.getTracks(playlist_id: String(id)){ tracks in
+                                completed(tracks)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     public func getAllUserTracks(index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.getUserPlaylists(){ results in

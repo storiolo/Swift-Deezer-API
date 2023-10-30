@@ -18,6 +18,12 @@ struct ErrorDetails: Codable {
 
 
 //<<---- DATA ---->>\\
+public struct DeezerDataUser: Decodable {
+    public let data: [DeezerUser]?
+    public let total: Int?
+    public let checksum: String?
+    public let next: String?
+}
 
 public struct DeezerUser: Decodable {
     public let id: Int?
