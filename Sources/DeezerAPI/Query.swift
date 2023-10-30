@@ -98,6 +98,11 @@ extension DeezerAPI {
         self.query(DeezerUser.self, url: "user/me", completed: completed)
     }
     
+    //https://api.deezer.com/track/TRACK_ID
+    public func getTrack(track_id: String, completed: @escaping (DeezerTrack?) -> Void) {
+        self.query(DeezerTrack.self, url: "track/"+track_id, completed: completed)
+    }
+    
     //https://api.deezer.com/user/me/followings
     public func getFollowing(completed: @escaping (DeezerDataUser?) -> Void) {
         self.query(DeezerDataUser.self, url: "user/me/followings", completed: completed)

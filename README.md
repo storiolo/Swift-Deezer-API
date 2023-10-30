@@ -81,7 +81,7 @@ Whenever you'll do a query and accessToken expire, it will update and do your qu
 
 ```swift
 var body: some View {
-    DeezerAPI.AutoConnect(deezer: $deezer)
+    DeezerAPI.AutoConnect(deezer: deezer)
 }
 ```
 
@@ -96,38 +96,6 @@ deezer.getUser(){ deezerUser in
 }
 ```
 
-Below are all implemented request:
-
-```swift
-//<<---- get Method ---->>\\
-getUser()
-getUserPlaylists()
-getAlbum(album_id: String)
-getTracks(playlist_id: String)
-getAllTracks(playlist_id: Int)
-getArtist(artist_id: String)
-getHistory()
-
-
-//<<---- post Method ---->>\\
-createPlaylist(title: String)
-addTracksToPlaylist(playlist_id: String, tracks_id: [String])
-addTrackToFavorite(track_id: String)
-
-
-//<<---- Next Method ---->>\\
-//getNext(type: Type, urlNext: String)
-
-
-//<<---- Search Method ---->>\\
-SearchAlbum(search: String)
-SearchArtist(search: String)
-SearchPlaylist(search: String)
-SearchTrack(search: String)
-
-//<<---- Image Method ---->>\\
-getImageAlbum(coverURL: String)
-```
 
 
 
