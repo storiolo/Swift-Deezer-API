@@ -74,16 +74,28 @@ extension DeezerAPI {
         @Binding var isShowingView: Bool
         
         
-        func makeUIView(context: Context) -> WKWebView {
-            let webView = WKWebView()
-            webView.navigationDelegate = context.coordinator
-            return webView
-        }
+        #if os(iOS) || os(watchOS) || os(tvOS)
+            func makeUIView(context: Context) -> WKWebView {
+                let webView = WKWebView()
+                webView.navigationDelegate = context.coordinator
+                return webView
+            }
+            func updateUIView(_ uiView: WKWebView, context: Context) {
+                let request = URLRequest(url: self.url)
+                uiView.load(request)
+            }
+        #elseif os(macOS)
+            func makeNSView(context: Context) -> NSVisualEffectView {
+                let webView = WKWebView()
+                webView.navigationDelegate = context.coordinator
+                return webView
+            }
+            func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+                let request = URLRequest(url: self.url)
+                nsView.load(request)
+            }
+        #endif
         
-        func updateUIView(_ uiView: WKWebView, context: Context) {
-            let request = URLRequest(url: self.url)
-            uiView.load(request)
-        }
         
         func makeCoordinator() -> Coordinator {
             Coordinator(self)
