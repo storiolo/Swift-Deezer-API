@@ -81,7 +81,7 @@ Whenever you'll do a query and accessToken expire, it will update and do your qu
 
 ```swift
 var body: some View {
-    DeezerAPI.AutoConnect(deezer: $deezer)
+    DeezerAPI.AutoConnect(deezer: deezer)
 }
 ```
 
