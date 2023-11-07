@@ -57,7 +57,7 @@ extension DeezerAPI {
                 dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
             }
 
-            print(dataURL)
+//            print(dataURL)
             
             AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
@@ -73,7 +73,7 @@ extension DeezerAPI {
                             self.setState("start")
                             
                             //redo it
-                            self.query(T.self, url: url, completed: completed)
+                            self.query(T.self, url: url, post: post, completed: completed)
                         } catch {
                             let data = try decoder.decode(T.self, from: data)
                             completed(data)
@@ -299,16 +299,16 @@ extension DeezerAPI {
     //https://api.deezer.com/search/playlist?q=
     //https://api.deezer.com/search/track?q=
     public func SearchAlbum(search: String, completed: @escaping (DeezerDataAlbum?) -> Void) {
-        self.query(DeezerDataAlbum.self, url: "search/album", post: "q"+search, completed: completed)
+        self.query(DeezerDataAlbum.self, url: "search/album", post: "q="+search, completed: completed)
     }
     public func SearchArtist(search: String, completed: @escaping (DeezerDataArtist?) -> Void) {
-        self.query(DeezerDataArtist.self, url: "search/artist", post: "q"+search, completed: completed)
+        self.query(DeezerDataArtist.self, url: "search/artist", post: "q="+search, completed: completed)
     }
     public func SearchPlaylist(search: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
-        self.query(DeezerDataPlaylist.self, url: "search/playlist", post: "q"+search, completed: completed)
+        self.query(DeezerDataPlaylist.self, url: "search/playlist", post: "q="+search, completed: completed)
     }
     public func SearchTrack(search: String, completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.query(DeezerDataTrack.self, url: "search/track", post: "q"+search, completed: completed)
+        self.query(DeezerDataTrack.self, url: "search/track", post: "q="+search, completed: completed)
     }
     
     
