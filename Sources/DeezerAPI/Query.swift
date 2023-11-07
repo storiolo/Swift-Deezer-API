@@ -310,7 +310,9 @@ extension DeezerAPI {
     public func SearchTrack(search: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "search/track", post: "q="+search, completed: completed)
     }
-    
+    public func SearchUser(search: String, completed: @escaping (DeezerDataUser?) -> Void) {
+        self.query(DeezerDataUser.self, url: "search/user", post: "q="+search, completed: completed)
+    }
     
     
     //<<---- Image Method ---->>\\
