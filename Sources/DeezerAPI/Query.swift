@@ -99,6 +99,9 @@ extension DeezerAPI {
     public func getUser(completed: @escaping (DeezerUser?) -> Void) {
         self.query(DeezerUser.self, url: "user/me", completed: completed)
     }
+    public func getaUser(user_id: String, completed: @escaping (DeezerUser?) -> Void) {
+        self.query(DeezerUser.self, url: "user/"+user_id, completed: completed)
+    }
     
     //https://api.deezer.com/track/TRACK_ID
     public func getTrack(track_id: String, completed: @escaping (DeezerTrack?) -> Void) {
