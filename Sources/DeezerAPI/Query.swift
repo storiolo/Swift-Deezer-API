@@ -37,7 +37,7 @@ extension DeezerAPI {
         if self.getState() == "connected" {
             url = url + "&access_token=" + self.getAccessToken()
         }
-        
+        print(URL(string: url)!)
         return URL(string: url)!
     }
     
