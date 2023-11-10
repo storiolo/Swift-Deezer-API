@@ -79,6 +79,10 @@ public struct DeezerAPI {
     public func isDisconnected() -> Bool {
         return getState() == "disconnected"
     }
+    public func isTryingtoConnect() -> Bool {
+        let state = getState()
+        return !(state == "disconnected" || state == "connected")
+    }
     
     ///disconnect user
     public func disconnect() {
