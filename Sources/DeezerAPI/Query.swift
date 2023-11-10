@@ -31,7 +31,7 @@ extension DeezerAPI {
         //add post if exist
         var url: String = request
         if let post = post {
-            url = url + "&" + post
+            url = url + "&" + post.replacingOccurrences(of: " ", with: "%20")
         }
         
         if self.getState() == "connected" {
