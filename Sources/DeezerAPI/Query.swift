@@ -31,13 +31,12 @@ extension DeezerAPI {
         //add post if exist
         var url: String = request
         if let post = post {
-            url = url + "&" + post.replacingOccurrences(of: " ", with: "%20")
+            url = url + "&" + post.replacingOccurrences(of: " ", with: "+")
         }
         
         if self.getState() == "connected" {
             url = url + "&access_token=" + self.getAccessToken()
         }
-        print(URL(string: url)!)
         return URL(string: url)!
     }
     
