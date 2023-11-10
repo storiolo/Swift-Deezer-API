@@ -80,6 +80,7 @@ public struct DeezerAPI {
         return getState() == "disconnected"
     }
     
+    ///disconnect user
     public func disconnect() {
         self.setState("disconnected")
         self.setAccessToken("")
