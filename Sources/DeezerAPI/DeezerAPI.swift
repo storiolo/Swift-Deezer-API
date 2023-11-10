@@ -41,7 +41,8 @@ public struct DeezerAPI {
         UserDefaults.standard.set(token, forKey: "DeezerAPI_token")
     }
 
-    
+
+//        case disconnected
 //        case start
 //        case tokenFound
 //        case connected
@@ -74,6 +75,9 @@ public struct DeezerAPI {
     ///Return true if user is connected
     public func isConnected() -> Bool {
         return getState() == "connected"
+    }
+    public func isDisconnected() -> Bool {
+        return getState() == "disconnected"
     }
     
     
