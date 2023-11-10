@@ -29,11 +29,13 @@ extension DeezerAPI {
     ///- request_url?access_token=XXXX&post=value
     func makedataURL(request: String, post: String? = nil) -> URL? {
         //add post if exist
-        let url: String
+        var url: String = request
         if let post = post {
-            url = request + "&" + post + "&access_token=" + self.getAccessToken()
-        } else {
-            url = request + "&access_token=" + self.getAccessToken()
+            url = url + "&" + post
+        }
+        
+        if self.getState() == "connected" {
+            url = url + "&access_token=" + self.getAccessToken()
         }
         
         return URL(string: url)!
@@ -45,48 +47,45 @@ extension DeezerAPI {
     ///- post is optionnal, if the query require more input, eg. see post Methods
     ///- completed will return the query
     func query<T: Decodable>(_ type: T.Type, url: String, post: String? = nil, completed: @escaping (T?) -> Void) {
-        Task {
-            //If not in connected repeat until it is
-            while !self.isConnected() {}
-            
-            //verify url has not been already made (next method don't need to construct it)
-            let dataURL: URL
-            if url.contains("https://") {
-                dataURL = URL(string: url)!
-            } else {
-                dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
-            }
+        //verify url has not been already made (next method don't need to construct it)
+        let dataURL: URL
+        if url.contains("https://") {
+            dataURL = URL(string: url)!
+        } else {
+            dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
+        }
 
 //            print(dataURL)
-            
-            AF.request(dataURL, method: .get).responseData { response in
-                switch response.result {
-                case .success(let data):
+        
+        AF.request(dataURL, method: .get).responseData { response in
+            switch response.result {
+            case .success(let data):
+                do {
+                    let decoder = JSONDecoder()
+                    
                     do {
-                        let decoder = JSONDecoder()
+                        _ = try decoder.decode(DeezerError.self, from: data)
+                        print("deezer: Not Connected")
                         
-                        do {
-                            _ = try decoder.decode(DeezerError.self, from: data)
-                            print("deezer: Not Connected")
-                            
-                            //reconnect
-                            self.setState("start")
-                            
-                            //redo it
-                            self.query(T.self, url: url, post: post, completed: completed)
-                        } catch {
-                            let data = try decoder.decode(T.self, from: data)
-                            completed(data)
-                        }
+                        //reconnect
+                        self.setState("start")
                         
+                        self.alert.showAlert(title: "Please Connect to Deezer")
+                        
+                        //redo it
+//                        self.query(T.self, url: url, post: post, completed: completed)
                     } catch {
-                        print("deezer: \(error)")
-                        completed(nil)
+                        let data = try decoder.decode(T.self, from: data)
+                        completed(data)
                     }
-                case .failure(let error):
+                    
+                } catch {
                     print("deezer: \(error)")
                     completed(nil)
                 }
+            case .failure(let error):
+                print("deezer: \(error)")
+                completed(nil)
             }
         }
     }

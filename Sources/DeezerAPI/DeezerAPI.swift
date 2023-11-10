@@ -11,6 +11,8 @@ public struct DeezerAPI {
     public var redirect_uri = ""
     public var permissions = ""
     
+    public var alert = DeezerAlert()
+    
     public let authorizeUrl = "https://connect.deezer.com/oauth/auth.php"
     public let authentificationURL = "https://connect.deezer.com/oauth/access_token.php"
     
