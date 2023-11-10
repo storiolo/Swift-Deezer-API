@@ -168,6 +168,13 @@ public struct DeezerTrack: Codable {
     public let album: DeezerAlbum?
     public let type: String?
 }
+
+public struct DeezerDataGenre: Decodable {
+    public let data: [DeezerGenre]?
+    public let total: Int?
+    public let checksum: String?
+    public let next: String?
+}
 public struct DeezerGenre: Codable {
     public let id: Int?
     public let name: String?

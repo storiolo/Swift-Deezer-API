@@ -247,8 +247,10 @@ extension DeezerAPI {
         }
     }
 
-    
-    
+    //https://api.deezer.com/genre
+    public func getGenres(genre_id: String, completed: @escaping (DeezerDataGenre?) -> Void) {
+        self.query(DeezerDataGenre.self, url: "genre/"+genre_id, completed: completed)
+    }
     
     
     
