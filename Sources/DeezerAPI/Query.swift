@@ -174,6 +174,10 @@ extension DeezerAPI {
         recursiveGetAllTracks(index: index)
     }
     
+    //https://api.deezer.com/playlist/PLAYLIST_ID
+    public func getPlaylist(playlist_id: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        self.query(DeezerDataPlaylist.self, url: "playlist/"+playlist_id, completed: completed)
+    }
     
     
     
