@@ -59,7 +59,7 @@ extension DeezerAPI {
                 dataURL = makedataURL(request: DeezerAPI.base_url + url, post: post)!
             }
             
-                        print(dataURL)
+//                        print(dataURL)
             
             AF.request(dataURL, method: .get).responseData { response in
                 switch response.result {
@@ -68,16 +68,20 @@ extension DeezerAPI {
                         let decoder = JSONDecoder()
                         
                         do {
-                            _ = try decoder.decode(DeezerError.self, from: data)
-                            print("deezer: Not Connected")
-                            
-                            //reconnect
-                            if self.isDisconnected() {
-                                self.alert.showAlert(title: "Please Connect to Deezer")
+                            let error = try decoder.decode(DeezerError.self, from: data)
+                            if error.error.type == "OAuthException" {
+                                print("deezer: Not Connected")
+                                
+                                //reconnect
+                                if self.isDisconnected() {
+                                    self.alert.showAlert(title: "Please Connect to Deezer")
+                                } else {
+                                    self.setState("start")
+                                    //redo it
+                                    self.query(T.self, url: url, post: post, completed: completed)
+                                }
                             } else {
-                                self.setState("start")
-                                //redo it
-                                self.query(T.self, url: url, post: post, completed: completed)
+                                print("deezer: Query error")
                             }
                         } catch {
                             let data = try decoder.decode(T.self, from: data)
