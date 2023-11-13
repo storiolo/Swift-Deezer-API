@@ -79,7 +79,7 @@ public struct DeezerPlaylist: Decodable {
     public let timeMod: Int?
     public let creator: DeezerCreator?
     public let type: String?
-    public let tracks: [DeezerTrack]?
+    public let tracks: [DeezerDataTrack]?
 }
 public struct DeezerCreator: Decodable {
     public let id: Int?
