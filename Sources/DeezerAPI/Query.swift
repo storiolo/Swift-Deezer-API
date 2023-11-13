@@ -179,8 +179,8 @@ extension DeezerAPI {
     }
     
     //https://api.deezer.com/playlist/PLAYLIST_ID
-    public func getPlaylist(playlist_id: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
-        self.query(DeezerDataPlaylist.self, url: "playlist/"+playlist_id, completed: completed)
+    public func getPlaylist(playlist_id: String, completed: @escaping (DeezerPlaylist?) -> Void) {
+        self.query(DeezerPlaylist.self, url: "playlist/"+playlist_id, completed: completed)
     }
     
     
