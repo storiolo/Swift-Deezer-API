@@ -6,6 +6,8 @@ import Foundation
 
 
 public struct DeezerAPI {
+    public var debug = false
+    
     public var clientId = ""
     public var clientSecret = ""
     public var redirect_uri = ""
