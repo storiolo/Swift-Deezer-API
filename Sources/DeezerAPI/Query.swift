@@ -77,6 +77,7 @@ extension DeezerAPI {
                                 //reconnect
                                 if self.isDisconnected() {
                                     self.alert.showAlert(title: "Please Connect to Deezer")
+                                    completed(nil)
                                 } else {
                                     self.setState("start")
                                     //redo it
@@ -84,6 +85,7 @@ extension DeezerAPI {
                                 }
                             } else {
                                 print("deezer: Query error")
+                                completed(nil)
                             }
                         } catch {
                             let data = try decoder.decode(T.self, from: data)
