@@ -6,7 +6,7 @@ import WebKit
 
 #if os(iOS) || os(watchOS) || os(tvOS)
     typealias ViewRepresentable = UIViewRepresentable
-#elseif os(macOS)
+#elseif os(macOS) 
     typealias ViewRepresentable = NSViewRepresentable
 #endif
 

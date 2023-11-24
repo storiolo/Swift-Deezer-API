@@ -8,12 +8,12 @@ import Alamofire
 #if canImport(SwiftUI)
 import SwiftUI
 #endif
-#if canImport(AppKit)
-import AppKit
-typealias PlatformImage = NSImage
-#elseif canImport(UIKit)
+#if canImport(UIKit)
 import UIKit
 typealias PlatformImage = UIImage
+#elseif canImport(AppKit)
+import AppKit
+typealias PlatformImage = NSImage
 #endif
 
 
@@ -345,10 +345,10 @@ extension DeezerAPI {
             case .success(let data):
                 #if canImport(AppKit) || canImport(UIKit)
                     if let image = PlatformImage(data: data) {
-                        #if canImport(AppKit)
-                            completion(Image(nsImage: image))
-                        #elseif canImport(UIKit)
+                        #if canImport(UIKit)
                             completion(Image(uiImage: image))
+                        #elseif canImport(AppKit)
+                            completion(Image(nsImage: image))
                         #else
                             print("deezer: Image data cannot be converted to Image")
                             completion(nil)
