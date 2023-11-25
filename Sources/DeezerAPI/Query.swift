@@ -326,8 +326,8 @@ extension DeezerAPI {
     public func SearchArtist(search: String, completed: @escaping (DeezerDataArtist?) -> Void) {
         self.query(DeezerDataArtist.self, url: "search/artist", post: "q="+search, completed: completed)
     }
-    public func SearchPlaylist(search: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
-        self.query(DeezerDataPlaylist.self, url: "search/playlist", post: "q="+search, completed: completed)
+    public func SearchPlaylist(search: String, max: Int, completed: @escaping (DeezerDataPlaylist?) -> Void) {
+        self.query(DeezerDataPlaylist.self, url: "search/playlist", post: "q="+search+"&limit="+String(max), completed: completed)
     }
     public func SearchTrack(search: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "search/track", post: "q="+search, completed: completed)
