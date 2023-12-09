@@ -87,7 +87,7 @@ public struct DeezerCreator: Decodable {
     public let tracklist: String?
     public let type: String?
 }
-public struct DeezerDataArtist: Decodable {
+public struct DeezerDataArtist: Codable {
     public let data: [DeezerArtist]?
     public let total: Int?
     public let checksum: String?
@@ -140,12 +140,12 @@ public struct DeezerAlbum: Codable {
     public let explicit_lyrics: Bool?
     public let explicit_content_lyrics: Int?
     public let explicit_content_cover: Int?
-    public let contributors: [DeezerArtist]?
+    public let contributors: DeezerDataArtist?
     public let artist: DeezerArtist?
     public let type: String?
-    public let tracks: [DeezerTrack]?
+    public let tracks: DeezerDataTrack?
 }
-public struct DeezerDataTrack: Decodable {
+public struct DeezerDataTrack: Codable {
     public let data: [DeezerTrack]?
     public let total: Int?
     public let checksum: String?
