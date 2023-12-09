@@ -128,7 +128,7 @@ public struct DeezerAlbum: Codable {
     public let cover_xl: String?
     public let md5_image: String?
     public let genre_id: Int?
-    public let genres: [DeezerGenre]?
+    public let genres: [DeezerDataGenre]?
     public let label: String?
     public let nb_tracks: Int?
     public let duration: Int?
@@ -169,7 +169,7 @@ public struct DeezerTrack: Codable {
     public let type: String?
 }
 
-public struct DeezerDataGenre: Decodable {
+public struct DeezerDataGenre: Codable {
     public let data: [DeezerGenre]?
     public let total: Int?
     public let checksum: String?
