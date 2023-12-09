@@ -130,56 +130,8 @@ extension DeezerAPI {
     public func getUserPlaylists(completed: @escaping (DeezerDataPlaylist?) -> Void) {
         self.query(DeezerDataPlaylist.self, url: "user/me/playlists", completed: completed)
     }
-    public func getAllUserPlaylists(index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
-        var concatenatedTracks: [DeezerPlaylist] = []
-        
-        func recursiveGetAllTracks(index: Int) {
-            self.query(DeezerDataPlaylist.self, url: "user/me/playlists", post: "index=\(index)") { playlists in
-                if let playlists = playlists {
-                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
-                    
-                    if let _ = playlists.next {
-                        recursiveGetAllTracks(index: index + 25)
-                    } else {
-                        completed(DeezerDataPlaylist(data: concatenatedTracks,
-                                                     total: playlists.total,
-                                                     checksum: playlists.checksum,
-                                                     next: nil))
-                    }
-                } else {
-                    completed(nil)
-                }
-            }
-        }
-        
-        recursiveGetAllTracks(index: index)
-    }
     public func getPlaylistsOfUser(user_id: String, completed: @escaping (DeezerDataPlaylist?) -> Void) {
         self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", completed: completed)
-    }
-    public func getAllPlaylistsOfUser(user_id: String, index: Int = 0, completed: @escaping (DeezerDataPlaylist?) -> Void) {
-        var concatenatedTracks: [DeezerPlaylist] = []
-        
-        func recursiveGetAllTracks(index: Int) {
-            self.query(DeezerDataPlaylist.self, url: "user/"+user_id+"/playlists", post: "index=\(index)") { playlists in
-                if let playlists = playlists {
-                    concatenatedTracks.append(contentsOf: playlists.data ?? [])
-                    
-                    if let _ = playlists.next {
-                        recursiveGetAllTracks(index: index + 25)
-                    } else {
-                        completed(DeezerDataPlaylist(data: concatenatedTracks,
-                                                     total: playlists.total,
-                                                     checksum: playlists.checksum,
-                                                     next: nil))
-                    }
-                } else {
-                    completed(nil)
-                }
-            }
-        }
-        
-        recursiveGetAllTracks(index: index)
     }
     
     //https://api.deezer.com/playlist/PLAYLIST_ID
@@ -196,67 +148,14 @@ extension DeezerAPI {
     
     
     //https://api.deezer.com/playlist/PLAYLIST_ID/tracks
-    ///getTracks will get 25 first tracks of the playlist
-    ///you'll have to do Next Method
     public func getTracks(playlist_id: String, completed: @escaping (DeezerDataTrack?) -> Void) {
         self.query(DeezerDataTrack.self, url: "playlist/"+playlist_id+"/tracks", completed: completed)
     }
-    public func getAllTracks(playlist_id: String, index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
-        var concatenatedTracks: [DeezerTrack] = []
-        
-        func recursiveGetAllTracks(index: Int) {
-            self.query(DeezerDataTrack.self, url: "playlist/\(playlist_id)/tracks", post: "index=\(index)") { tracks in
-                if let tracks = tracks {
-                    concatenatedTracks.append(contentsOf: tracks.data ?? [])
-                    
-                    if let _ = tracks.next {
-                        recursiveGetAllTracks(index: index + 25)
-                    } else {
-                        completed(DeezerDataTrack(data: concatenatedTracks,
-                                                  total: tracks.total,
-                                                  checksum: tracks.checksum,
-                                                  next: nil))
-                    }
-                } else {
-                    completed(nil)
-                }
-            }
-        }
-        
-        recursiveGetAllTracks(index: index)
-    }
     
     
-    //https://api.deezer.com/user/me/personal_songs
+    //https://api.deezer.com/user/me/tracks
     public func getUserTracks(completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.getUserPlaylists(){ results in
-            if let results = results?.data {
-                for result in results {
-                    if result.title == "Loved tracks" {
-                        if let id = result.id {
-                            self.getTracks(playlist_id: String(id)){ tracks in
-                                completed(tracks)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    public func getAllUserTracks(index: Int = 0, completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.getUserPlaylists(){ results in
-            if let results = results?.data {
-                for result in results {
-                    if result.title == "Loved tracks" {
-                        if let id = result.id {
-                            self.getAllTracks(playlist_id: String(id)){ tracks in
-                                completed(tracks)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        self.query(DeezerDataTrack.self, url: "user/me/tracks", completed: completed)
     }
 
     //https://api.deezer.com/genre
@@ -308,8 +207,12 @@ extension DeezerAPI {
     //<<---- Next Method ---->>\\
     
     //https://api.deezer.com/LAST_GET_METHOD?index=
-    public func getNext<T: Decodable>(_ type: T.Type, urlNext: String, completed: @escaping (T?) -> Void) {
-        self.query(type, url: "user/me/tracks", completed: completed)
+    public func getNext<T: Decodable>(_ type: T.Type, urlNext: String?, completed: @escaping (T?) -> Void) {
+        guard let urlNext = urlNext else {
+            completed(nil)
+            return
+        }
+        self.query(type, url: urlNext, completed: completed)
     }
     
     
