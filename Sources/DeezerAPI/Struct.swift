@@ -140,7 +140,7 @@ public struct DeezerAlbum: Codable {
     public let explicit_lyrics: Bool?
     public let explicit_content_lyrics: Int?
     public let explicit_content_cover: Int?
-    public let contributors: DeezerDataArtist?
+    public let contributors: [DeezerArtist]?
     public let artist: DeezerArtist?
     public let type: String?
     public let tracks: DeezerDataTrack?
