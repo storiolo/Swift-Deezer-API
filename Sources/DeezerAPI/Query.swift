@@ -172,9 +172,13 @@ extension DeezerAPI {
     
     
     //https://api.deezer.com/user/me/history
-    public func getHistory(completed: @escaping (DeezerDataTrack?) -> Void) {
-        self.query(DeezerDataTrack.self, url: "user/me/history", completed: completed)
+    public func getCurrentSong(completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.query(DeezerDataTrack.self, url: "user/me/history?limit=1", completed: completed)
     }
+    public func getHistory(completed: @escaping (DeezerDataTrack?) -> Void) {
+        self.query(DeezerDataTrack.self, url: "user/me/history?index=1", completed: completed)
+    }
+    
     
     
     
